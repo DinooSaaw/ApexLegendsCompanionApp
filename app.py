@@ -1,5 +1,23 @@
 import tkinter as tk
 
+class StatsPage(tk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        label = tk.Label(self, text="Welcome to the Stats Page")
+        label.pack()
+
+class LeaderboardPage(tk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        label = tk.Label(self, text="Welcome to the Leaderboard Page")
+        label.pack()
+
+class HomePage(tk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        label = tk.Label(self, text="Welcome to the Home Page")
+        label.pack()
+
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -22,9 +40,9 @@ class Application(tk.Tk):
         self.home_button.grid(row=0, column=2, padx=10)
         
         # Create page containers
-        self.stats_page = tk.Frame(self)
-        self.leaderboard_page = tk.Frame(self)
-        self.home_page = tk.Frame(self)
+        self.stats_page = None
+        self.leaderboard_page = None
+        self.home_page = None
         
         self.current_page = None
         
@@ -32,33 +50,34 @@ class Application(tk.Tk):
         self.open_home_page()
     
     def open_stats_page(self):
-        self.show_page(self.stats_page)
-        
-    def open_leaderboard_page(self):
-        self.show_page(self.leaderboard_page)
-        
-    def open_home_page(self):
-        self.show_page(self.home_page)
-        
-    def show_page(self, page):
         if self.current_page:
             self.current_page.pack_forget()
             
-        page.pack()
-        self.current_page = page
-
-        # Add text to each page
-        if page == self.stats_page:
-            label = tk.Label(page, text="Welcome to the Stats Page")
-            label.pack()
+        if self.stats_page is None:
+            self.stats_page = StatsPage(self)
         
-        elif page == self.leaderboard_page:
-            label = tk.Label(page, text="Welcome to the Leaderboard Page")
-            label.pack()
+        self.stats_page.pack()
+        self.current_page = self.stats_page
         
-        elif page == self.home_page:
-            label = tk.Label(page, text="Welcome to the Home Page")
-            label.pack()
+    def open_leaderboard_page(self):
+        if self.current_page:
+            self.current_page.pack_forget()
+            
+        if self.leaderboard_page is None:
+            self.leaderboard_page = LeaderboardPage(self)
+        
+        self.leaderboard_page.pack()
+        self.current_page = self.leaderboard_page
+        
+    def open_home_page(self):
+        if self.current_page:
+            self.current_page.pack_forget()
+            
+        if self.home_page is None:
+            self.home_page = HomePage(self)
+        
+        self.home_page.pack()
+        self.current_page = self.home_page
 
 # Run the application
 app = Application()
