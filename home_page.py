@@ -22,6 +22,7 @@ class HomePage(tk.Frame):
                 if self.current_index == len(expected_sequence):
                     print("Konami code entered!")
                     self.current_index = 0
+                    keyboard.unhook_all()
             else:
                 self.current_index = 0
 
