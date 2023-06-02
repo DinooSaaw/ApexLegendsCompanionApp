@@ -1,22 +1,7 @@
 import tkinter as tk
-
-class StatsPage(tk.Frame):
-    def __init__(self, parent):
-        super().__init__(parent)
-        label = tk.Label(self, text="Welcome to the Stats Page")
-        label.pack()
-
-class LeaderboardPage(tk.Frame):
-    def __init__(self, parent):
-        super().__init__(parent)
-        label = tk.Label(self, text="Welcome to the Leaderboard Page")
-        label.pack()
-
-class HomePage(tk.Frame):
-    def __init__(self, parent):
-        super().__init__(parent)
-        label = tk.Label(self, text="Welcome to the Home Page")
-        label.pack()
+from stats_page import StatsPage
+from leaderboard_page import LeaderboardPage
+from home_page import HomePage
 
 class Application(tk.Tk):
     def __init__(self):
