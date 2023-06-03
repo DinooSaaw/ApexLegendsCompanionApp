@@ -3,7 +3,7 @@ from stats_page import StatsPage
 from leaderboard_page import LeaderboardPage
 from home_page import HomePage
 from login_page import LoginPage
-
+accessLevel = 0
 
 class Application(tk.Tk):
     def __init__(self):
@@ -40,7 +40,7 @@ class Application(tk.Tk):
         self.is_logged_in = False  # Variable to track login status
 
         # Create a label to display the username
-        self.username_label = tk.Label(self, text="Username: Not Logged In", font=("Arial", 10))
+        self.username_label = tk.Label(self, text="Not Logged In", font=("Arial", 10))
         self.username_label.pack(side=tk.BOTTOM, anchor=tk.W, padx=10, pady=10)
 
         # Create the login button
@@ -108,9 +108,10 @@ class Application(tk.Tk):
         self.is_konami_code_active = True
         self.login_button.pack(side=tk.TOP, anchor=tk.E, padx=10, pady=10)
 
-    def login_callback(self, username):
+    def login_callback(self, username, accessLevel):
         self.is_logged_in = True
-        self.username_label.config(text=f"Username: {username}")
+        accessLevel = accessLevel
+        self.username_label.config(text=f"Logged In as {username}")
         self.open_home_page()
         self.username_label.pack(side=tk.BOTTOM, anchor=tk.W, padx=10, pady=10)
         self.login_button.pack_forget()  # Hide the login button after successful login
