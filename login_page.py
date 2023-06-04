@@ -1,4 +1,12 @@
 import tkinter as tk
+from database import connect_to_mongodb, find_documents
+
+# Establish connection to MongoDB
+client = connect_to_mongodb()
+
+# Get a reference to the desired collection
+db = client["ALC"]
+collection = db["users"]
 
 class LoginPage(tk.Frame):
     def __init__(self, parent, login_callback):
@@ -23,10 +31,23 @@ class LoginPage(tk.Frame):
         username = self.entry_username.get()
         password = self.entry_password.get()
 
-        # Perform login validation (replace with your own logic)
-        if username == "admin" and password == "password":
-            print(f"Login successful. Username: {username}")
-            self.login_callback(username)
-        else:
+        # Perform login validation
+        query = {"username": username}
+        results = find_documents(collection, query)
+
+        try:
+            first_result = results.next()
+            stored_password = first_result["password"]
+
+            if password == stored_password:
+                print(f"Login successful. Log in as {username}")
+                self.login_callback(username, first_result["accessLevel"])
+            else:
+                self.entry_username.delete(0, tk.END)  # Clear username entry
+                self.entry_password.delete(0, tk.END)  # Clear password entry
+                print("Invalid username or password")
+
+        except StopIteration:
             self.entry_username.delete(0, tk.END)  # Clear username entry
             self.entry_password.delete(0, tk.END)  # Clear password entry
+            print("Invalid username or password")

@@ -15,7 +15,7 @@ class HomePage(tk.Frame):
 
         def check_sequence(event):
             if self.focus_get() is None:  # Check if application is not in focus
-                return print("Lost of focus")
+                return
             
             print(event.name)
             if event.name == expected_sequence[self.current_index].lower():
