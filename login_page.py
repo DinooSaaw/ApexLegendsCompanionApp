@@ -9,7 +9,15 @@ db = client["ALC"]
 collection = db["users"]
 
 class LoginPage(tk.Frame):
+    """Class representing the Login Page of the application."""
+
     def __init__(self, parent, login_callback):
+        """Initialize the Login Page.
+
+        Args:
+            parent (tk.Widget): The parent widget.
+            login_callback (function): The callback function to handle login events.
+        """
         super().__init__(parent)
         self.login_callback = login_callback
 
@@ -28,6 +36,7 @@ class LoginPage(tk.Frame):
         button_login.pack()
 
     def login(self):
+        """Perform login based on the entered username and password."""
         username = self.entry_username.get()
         password = self.entry_password.get()
 
@@ -40,7 +49,7 @@ class LoginPage(tk.Frame):
             stored_password = first_result["password"]
 
             if password == stored_password:
-                print(f"Login successful. Log in as {username}")
+                print(f"Login successful. Logged in as {username}")
                 self.login_callback(username, first_result["accessLevel"])
             else:
                 self.entry_username.delete(0, tk.END)  # Clear username entry

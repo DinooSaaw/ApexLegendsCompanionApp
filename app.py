@@ -6,7 +6,10 @@ from login_page import LoginPage
 from settings_page import SettingsPage
 
 class GameApp(tk.Tk):
+    """Main application class for the game."""
+
     def __init__(self):
+        """Initialize the GameApp class."""
         super().__init__()
 
         self.title("ALC")
@@ -31,6 +34,7 @@ class GameApp(tk.Tk):
         self.open_home_page()
 
     def setup_ui(self):
+        """Set up the user interface."""
         # Create a frame for buttons
         button_frame = tk.Frame(self)
         button_frame.pack(pady=10)
@@ -57,12 +61,15 @@ class GameApp(tk.Tk):
         self.settings_button.place(x=self.winfo_width() - 60, y=0)
 
     def open_stats_page(self):
+        """Switch to the Stats page."""
         self.switch_page(self.stats_page, "Stats")
 
     def open_leaderboard_page(self):
+        """Switch to the Leaderboard page."""
         self.switch_page(self.leaderboard_page, "Leaderboard")
 
     def open_home_page(self):
+        """Switch to the Home page."""
         if self.is_logged_in:
             self.username_label.pack(side=tk.BOTTOM, anchor=tk.W, padx=10, pady=10)
             if self.access_level >= 3:
@@ -78,9 +85,17 @@ class GameApp(tk.Tk):
         self.switch_page(self.home_page, "Home")
 
     def open_login_page(self):
+        """Switch to the Login page."""
         self.switch_page(self.login_page, "Login")
 
     def switch_page(self, page, page_title):
+        """Switch to the specified page.
+
+        Args:
+            page: The page to switch to.
+            page_title: The title of the page.
+
+        """
         if self.current_page:
             self.current_page.pack_forget()
 
@@ -89,13 +104,27 @@ class GameApp(tk.Tk):
         self.update_title(page_title)
 
     def update_title(self, page_title):
+        """Update the application title.
+
+        Args:
+            page_title: The new title for the application.
+
+        """
         self.title(f"ALC ~ {page_title}")
 
     def konami_code_callback(self):
+        """Callback function for Konami code activation."""
         self.is_konami_code_active = True
         self.login_button.pack(side=tk.TOP, anchor=tk.E, padx=10, pady=10)
 
     def login_callback(self, username, access_level):
+        """Callback function for successful login.
+
+        Args:
+            username: The logged-in user's username.
+            access_level: The access level of the user.
+
+        """
         self.is_logged_in = True
         self.access_level = access_level
         self.username_label.config(text=f"Logged In as {username}")
@@ -104,6 +133,7 @@ class GameApp(tk.Tk):
         self.login_button.pack_forget()
 
     def open_settings_page(self):
+        """Switch to the Settings page."""
         self.switch_page(self.settings_page, "Settings")
 
 # Run the application

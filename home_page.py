@@ -2,7 +2,15 @@ import tkinter as tk
 import keyboard
 
 class HomePage(tk.Frame):
+    """Class representing the Home Page of the application."""
+
     def __init__(self, parent, callback):
+        """Initialize the Home Page.
+
+        Args:
+            parent (tk.Widget): The parent widget.
+            callback (callable): The callback function to be called when the Konami code is entered.
+        """
         super().__init__(parent)
         label = tk.Label(self, text="Welcome to the Home Page")
         label.pack()
@@ -14,6 +22,11 @@ class HomePage(tk.Frame):
         self.current_index = 0
 
         def check_sequence(event):
+            """Check if the entered key sequence matches the Konami code.
+
+            Args:
+                event (keyboard.KeyboardEvent): The keyboard event representing the pressed key.
+            """
             if self.focus_get() is None:  # Check if application is not in focus
                 return
             
