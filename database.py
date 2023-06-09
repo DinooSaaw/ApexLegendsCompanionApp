@@ -1,5 +1,11 @@
 from pymongo import MongoClient
 
+from dotenv import dotenv_values
+
+# Load the environment variables from .env file
+config = dotenv_values(".env")
+url_key = config.get("MONGO_URL")
+
 def connect_to_mongodb():
     """Connect to MongoDB and return the client object.
 
@@ -7,7 +13,7 @@ def connect_to_mongodb():
         MongoClient: The MongoDB client object.
 
     """
-    client = MongoClient("")
+    client = MongoClient(url_key)
     print("Connected to MongoDB!")
     return client
 
