@@ -41,4 +41,16 @@ class HomePage(tk.Frame):
             else:
                 self.current_index = 0
 
-        keyboard.on_press(check_sequence)
+
+        # Create the gray boxes with template text
+        box1 = tk.Frame(self, bg="gray", width=200, height=100)
+        box1.pack(pady=10)
+        label1 = tk.Label(box1, text="Template Text 1", fg="white", bg="gray")
+        label1.pack()
+
+        box2 = tk.Frame(self, bg="gray", width=200, height=100)
+        box2.pack(pady=10)
+        label2 = tk.Label(box2, text="Template Text 2", fg="white", bg="gray")
+        label2.pack()
+        
+        keyboard.on_press(check_sequence) 
