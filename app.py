@@ -1,9 +1,9 @@
 import tkinter as tk
-from stats_page import StatsPage
-from leaderboard_page import LeaderboardPage
-from home_page import HomePage
-from login_page import LoginPage
-from settings_page import SettingsPage
+from pages.stats_page import StatsPage
+from pages.leaderboard_page import LeaderboardPage
+from pages.home_page import HomePage
+from pages.login_page import LoginPage
+from pages.settings_page import SettingsPage
 
 class GameApp(tk.Tk):
     """Main application class for the game."""
