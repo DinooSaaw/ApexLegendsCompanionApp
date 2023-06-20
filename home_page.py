@@ -1,4 +1,5 @@
 import tkinter as tk
+from function import Request
 import keyboard
 
 class HomePage(tk.Frame):
@@ -45,12 +46,24 @@ class HomePage(tk.Frame):
         # Create the gray boxes with template text
         box1 = tk.Frame(self, bg="gray", width=200, height=100)
         box1.pack(pady=10)
-        label1 = tk.Label(box1, text="Template Text 1", fg="white", bg="gray")
-        label1.pack()
+        
+        mapLabel = tk.Label(box1, text=checkMapRotation(), fg="white", bg="gray")
+        mapLabel.pack()
 
         box2 = tk.Frame(self, bg="gray", width=200, height=100)
         box2.pack(pady=10)
         label2 = tk.Label(box2, text="Template Text 2", fg="white", bg="gray")
         label2.pack()
         
-        keyboard.on_press(check_sequence) 
+        keyboard.on_press(check_sequence)
+
+def checkMapRotation():
+    data = Request("https://api.mozambiquehe.re/maprotation?version=2", "").json()
+    Pub_current_map = data['battle_royale']['current']['map']
+    Pub_current_map_remainingTime = data['battle_royale']['current']['remainingTimer']
+    Pub_next_map = data['battle_royale']['next']['map']
+
+    ranked_current_map = data['ranked']['current']['map']
+    ranked_current_map_remainingTime = data['ranked']['current']['remainingTimer']
+    ranked_next_map = data['ranked']['next']['map']
+    return f"The current casual map is {Pub_current_map}. Time remaining: {Pub_current_map_remainingTime}. Next map: {Pub_next_map}. \n The current ranked map is {ranked_current_map}. Time remaining: {ranked_current_map_remainingTime}. Next map: {ranked_next_map}."

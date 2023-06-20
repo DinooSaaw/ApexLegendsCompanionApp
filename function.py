@@ -3,10 +3,10 @@ from dotenv import dotenv_values
 
 # Load the environment variables from .env file
 config = dotenv_values(".env")
-api_key = config.get("TRN_API_KEY")
+api_key = config.get("API_KEY")
 
 headersList = {
-    "TRN-Api-Key": api_key
+    "Authorization": api_key
 }
 
 def Request(url, payload):

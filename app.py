@@ -13,7 +13,7 @@ class GameApp(tk.Tk):
         super().__init__()
 
         self.title("ALC")
-        self.geometry("400x300")
+        self.geometry("600x400")
         icon_path = "./assests/icon.ico"
         self.iconbitmap(icon_path)
         self.setup_ui()
