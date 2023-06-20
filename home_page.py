@@ -13,8 +13,6 @@ class HomePage(tk.Frame):
             callback (callable): The callback function to be called when the Konami code is entered.
         """
         super().__init__(parent)
-        label = tk.Label(self, text="Welcome to the Home Page")
-        label.pack()
 
         self.callback = callback
 
@@ -52,8 +50,8 @@ class HomePage(tk.Frame):
 
         box2 = tk.Frame(self, bg="gray", width=200, height=100)
         box2.pack(pady=10)
-        label2 = tk.Label(box2, text="Template Text 2", fg="white", bg="gray")
-        label2.pack()
+        predLabel = tk.Label(box2, text=checkPredator(), fg="white", bg="gray")
+        predLabel.pack()
         
         keyboard.on_press(check_sequence)
 
@@ -67,3 +65,12 @@ def checkMapRotation():
     ranked_current_map_remainingTime = data['ranked']['current']['remainingTimer']
     ranked_next_map = data['ranked']['next']['map']
     return f"The current casual map is {Pub_current_map}. Time remaining: {Pub_current_map_remainingTime}. Next map: {Pub_next_map}. \n The current ranked map is {ranked_current_map}. Time remaining: {ranked_current_map_remainingTime}. Next map: {ranked_next_map}."
+
+def checkPredator():
+    data = Request("https://api.mozambiquehe.re/predator", "").json()
+    pc_Cap = data["RP"]['PC']["val"]
+    xbox_Cap = data["RP"]['X1']["val"]
+    ps_Cap = data["RP"]['PS4']["val"]
+    switch_Cap = data["RP"]['SWITCH']["val"]
+    
+    return f"The current predator cap on PC is {pc_Cap}RP.\n The current predator cap on XBOX is {xbox_Cap}RP.\n The current predator cap on PLAYSTAION is {ps_Cap}RP.\n The current predator cap on SWITCH is {switch_Cap}RP."
