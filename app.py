@@ -5,6 +5,7 @@ from pages.home_page import HomePage
 from pages.login_page import LoginPage
 from pages.settings_page import SettingsPage
 
+
 class GameApp(tk.Tk):
     """Main application class for the game."""
 
@@ -18,18 +19,19 @@ class GameApp(tk.Tk):
         self.iconbitmap(icon_path)
         self.setup_ui()
 
-        # Create page containers
-        self.stats_page = StatsPage(self)
-        self.leaderboard_page = LeaderboardPage(self)
-        self.home_page = HomePage(self, self.konami_code_callback)
-        self.login_page = LoginPage(self, self.login_callback)
-        self.settings_page = SettingsPage(self)
-
         # Set up variables
         self.current_page = None
         self.is_konami_code_active = False
         self.is_logged_in = False
         self.access_level = 0
+        self.username = "Anonymous"
+
+        # Create page containers
+        self.stats_page = StatsPage(self, self.login_callback, self.username)
+        self.leaderboard_page = LeaderboardPage(self)
+        self.home_page = HomePage(self, self.konami_code_callback)
+        self.login_page = LoginPage(self, self.login_callback)
+        self.settings_page = SettingsPage(self)
 
         self.open_home_page()
 
@@ -40,28 +42,35 @@ class GameApp(tk.Tk):
         button_frame.pack(pady=10)
 
         # Create buttons and place them in the frame
-        self.stats_button = tk.Button(button_frame, text="Stats", command=self.open_stats_page)
+        self.stats_button = tk.Button(
+            button_frame, text="Stats", command=self.open_stats_page)
         self.stats_button.grid(row=0, column=0, padx=10)
 
-        self.leaderboard_button = tk.Button(button_frame, text="Leaderboard", command=self.open_leaderboard_page)
+        self.leaderboard_button = tk.Button(
+            button_frame, text="Leaderboard", command=self.open_leaderboard_page)
         self.leaderboard_button.grid(row=0, column=1, padx=10)
 
-        self.home_button = tk.Button(button_frame, text="Home", command=self.open_home_page)
+        self.home_button = tk.Button(
+            button_frame, text="Home", command=self.open_home_page)
         self.home_button.grid(row=0, column=2, padx=10)
 
         # Create a label to display the username
-        self.username_label = tk.Label(self, text="Not Logged In", font=("Arial", 10))
+        self.username_label = tk.Label(
+            self, text="Not Logged In", font=("Arial", 10))
         self.username_label.pack(side=tk.BOTTOM, anchor=tk.W, padx=10, pady=10)
 
         # Create the login button
-        self.login_button = tk.Button(self, text="Login", command=self.open_login_page)
+        self.login_button = tk.Button(
+            self, text="Login", command=self.open_login_page)
 
         # Create the settings button
-        self.settings_button = tk.Button(self, text="⚙️", command=self.open_settings_page)
+        self.settings_button = tk.Button(
+            self, text="⚙️", command=self.open_settings_page)
         self.settings_button.place(x=self.winfo_width() - 60, y=0)
 
     def open_stats_page(self):
         """Switch to the Stats page."""
+        self.stats_page = StatsPage(self, self.login_callback, self.username)
         self.switch_page(self.stats_page, "Stats")
 
     def open_leaderboard_page(self):
@@ -71,7 +80,8 @@ class GameApp(tk.Tk):
     def open_home_page(self):
         """Switch to the Home page."""
         if self.is_logged_in:
-            self.username_label.pack(side=tk.BOTTOM, anchor=tk.W, padx=10, pady=10)
+            self.username_label.pack(
+                side=tk.BOTTOM, anchor=tk.W, padx=10, pady=10)
             if self.access_level >= 3:
                 self.settings_button.place(x=self.winfo_width() - 60, y=0)
             else:
@@ -127,6 +137,7 @@ class GameApp(tk.Tk):
         """
         self.is_logged_in = True
         self.access_level = access_level
+        self.username = username
         self.username_label.config(text=f"Logged In as {username}")
         self.open_home_page()
         self.username_label.pack(side=tk.BOTTOM, anchor=tk.W, padx=10, pady=10)
@@ -135,6 +146,7 @@ class GameApp(tk.Tk):
     def open_settings_page(self):
         """Switch to the Settings page."""
         self.switch_page(self.settings_page, "Settings")
+
 
 # Run the application
 if __name__ == "__main__":

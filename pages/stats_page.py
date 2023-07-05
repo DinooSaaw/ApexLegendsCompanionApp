@@ -4,22 +4,27 @@ from function import Request
 
 
 class StatsPage(tk.Frame):
-    """Class representing the Stats Page of the application."""
+    """Page that displays statistics."""
 
-    def __init__(self, parent):
-        """Initialize the Stats Page.
+    def __init__(self, parent, login_callback, username):
+        """Initialize the StatsPage class.
 
         Args:
-            parent (tk.Widget): The parent widget.
+            parent: The parent widget.
+            login_callback: The callback function for login.
+            username: The username of the logged-in user.
+
         """
         super().__init__(parent)
+        self.login_callback = login_callback
+        self.username = username
 
         # Player Name Entry
         player_name_label = tk.Label(self, text="Player Name:")
         player_name_label.grid(row=1, column=0)
-
         self.player_name_entry = tk.Entry(self)
         self.player_name_entry.grid(row=1, column=1)
+        self.player_name_entry.insert( 0, username)
 
         # Platform Dropdown
         platform_label = tk.Label(self, text="Platform:")
@@ -109,13 +114,32 @@ class StatsPage(tk.Frame):
         # Update level label
         self.level_label.config(text=f"Level: {level}")
 
-        self.labels.append(self.create_label(f"Rank Name: {rankName}\nLP: {formatNumber(rankScore)}", 8, 0))
-        self.labels.append(self.create_label(f"Legend Name: {LegendName}", 9, 0))
+        # Create a label with different color based on rankName
+        rank_name_label = self.create_label(f"Rank Name: {rankName}", 8, 0)
+        rank_LP_label = self.create_label(f"LP: {formatNumber(rankScore)}", 9, 0)
+        if rankName == "Bronze":
+            rank_name_label.config(fg="brown")
+        elif rankName == "Silver":
+            rank_name_label.config(fg="gray")
+        elif rankName == "Gold":
+            rank_name_label.config(fg="gold")
+        elif rankName == "Platinum":
+            rank_name_label.config(fg="light blue")
+        elif rankName == "Diamond":
+            rank_name_label.config(fg="blue")
+        elif rankName == "Master":
+            rank_name_label.config(fg="purple")
+        elif rankName == "Apex Predator":
+            rank_name_label.config(fg="red")
+
+        self.labels.append(rank_name_label)
+        self.labels.append(rank_LP_label)
+        self.labels.append(self.create_label(f"Legend Name: {LegendName}", 10, 0))
 
         for i, tracker in enumerate(LegendData[:3]):
             trackerName = tracker["name"]
             trackerValue = tracker["value"]
-            self.labels.append(self.create_label(f"{trackerName}: {trackerValue}", 10 + i, 0))
+            self.labels.append(self.create_label(f"{trackerName}: {trackerValue}", 11 + i, 0))
 
     def create_label(self, text, row, column):
         """Create a label with the given text and grid position."""

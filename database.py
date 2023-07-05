@@ -39,3 +39,17 @@ def find_documents(collection, query):
 
     """
     return collection.find(query)
+
+def update_document(collection, query, update):
+    """Update a document in the specified collection based on the query.
+
+    Args:
+        collection (Collection): The MongoDB collection to update the document in.
+        query (dict): The query to filter the document to be updated.
+        update (dict): The update to apply to the document.
+
+    Returns:
+        UpdateResult: The result of the update operation.
+
+    """
+    return collection.update_one(query, update)

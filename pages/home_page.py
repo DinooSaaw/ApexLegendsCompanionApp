@@ -1,5 +1,6 @@
 import tkinter as tk
-from function import Request  # Import the Request function from the function module
+import tkinter.ttk as ttk
+from function import Request
 import keyboard
 
 
@@ -14,7 +15,6 @@ class HomePage(tk.Frame):
             callback (callable): The callback function to be called when the Konami code is entered.
         """
         super().__init__(parent)
-
         self.callback = callback
 
         # Register the Konami code sequence
@@ -42,17 +42,35 @@ class HomePage(tk.Frame):
             else:
                 self.current_index = 0
 
-        # Create the gray box with template text
-        self.box = tk.Frame(self, bg="gray", width=200, height=100)
-        self.box.pack(pady=10)
+        self.configure(bg="")
 
-        self.mapLabel = tk.Label(self.box, fg="white", bg="gray")
-        self.mapLabel.pack()
+        map_rotation_text = checkMapRotation()  # Get the map rotation text
+        predator_text = checkPredator()  # Get the predator text
 
-        self.box2 = tk.Frame(self, bg="gray", width=200, height=100)
-        self.box2.pack(pady=10)
-        self.predLabel = tk.Label(self.box2, fg="white", bg="gray")
-        self.predLabel.pack()
+        style = ttk.Style()
+        style.configure(
+            "Map.TLabel",
+            background="light grey",
+            relief="dashed",
+            borderwidth=1,
+            padding=10
+        )
+
+        style.configure(
+            "Pred.TLabel",
+            background="light grey",
+            relief="dashed",
+            borderwidth=1,
+            padding=10
+        )
+
+        self.mapLabel = ttk.Label(
+            self, text=map_rotation_text, style="Map.TLabel", justify="center")
+        self.mapLabel.pack(padx=10, pady=10, fill="both")
+
+        self.predLabel = ttk.Label(
+            self, text=predator_text, style="Pred.TLabel", justify="center")
+        self.predLabel.pack(padx=10, pady=(0, 10), fill="both")
 
         keyboard.on_press(check_sequence)
         self.update_labels()  # Update the labels with the latest data
@@ -83,7 +101,7 @@ def checkMapRotation():
     ranked_current_map_remainingTime = data['ranked']['current']['remainingTimer']
     ranked_next_map = data['ranked']['next']['map']
 
-    return f"The current casual map is {Pub_current_map}. Time remaining: {Pub_current_map_remainingTime}. Next map: {Pub_next_map}. \nThe current ranked map is {ranked_current_map}. Time remaining: {ranked_current_map_remainingTime}. Next map: {ranked_next_map}."
+    return f"The current casual map is {Pub_current_map}. Time remaining: {Pub_current_map_remainingTime}. Next map: {Pub_next_map}.\n\nThe current ranked map is {ranked_current_map}. Time remaining: {ranked_current_map_remainingTime}. Next map: {ranked_next_map}."
 
 
 def checkPredator():
@@ -94,7 +112,7 @@ def checkPredator():
     ps_Cap = data["RP"]['PS4']["val"]
     switch_Cap = data["RP"]['SWITCH']["val"]
 
-    return f"The current predator cap on PC is {formatNumber(pc_Cap)} RP.\nThe current predator cap on XBOX is {formatNumber(xbox_Cap)} RP.\nThe current predator cap on PLAYSTATION is {formatNumber(ps_Cap)} RP.\nThe current predator cap on SWITCH is {formatNumber(switch_Cap)} RP."
+    return f"The current predator cap on PC is {formatNumber(pc_Cap)} RP.\n\nThe current predator cap on XBOX is {formatNumber(xbox_Cap)} RP.\n\nThe current predator cap on PLAYSTATION is {formatNumber(ps_Cap)} RP.\n\nThe current predator cap on SWITCH is {formatNumber(switch_Cap)} RP."
 
 
 def formatNumber(NUMBER):
