@@ -2,8 +2,6 @@ import tkinter as tk
 from pages.stats_page import StatsPage
 from pages.leaderboard_page import LeaderboardPage
 from pages.home_page import HomePage
-from pages.login_page import LoginPage
-from pages.settings_page import SettingsPage
 
 
 class GameApp(tk.Tk):
@@ -24,14 +22,12 @@ class GameApp(tk.Tk):
         self.is_konami_code_active = False
         self.is_logged_in = False
         self.access_level = 0
-        self.username = "Anonymous"
+        self.username = ""
 
         # Create page containers
         self.stats_page = StatsPage(self, self.login_callback, self.username)
         self.leaderboard_page = LeaderboardPage(self)
         self.home_page = HomePage(self, self.konami_code_callback)
-        self.login_page = LoginPage(self, self.login_callback)
-        self.settings_page = SettingsPage(self)
 
         self.open_home_page()
 

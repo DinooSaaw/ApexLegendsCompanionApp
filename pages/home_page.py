@@ -1,7 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from function import Request
-import keyboard
 
 
 class HomePage(tk.Frame):
@@ -18,29 +17,6 @@ class HomePage(tk.Frame):
         self.callback = callback
 
         # Register the Konami code sequence
-        expected_sequence = ["up", "up", "down", "down",
-                             "left", "right", "left", "right", "b", "a"]
-        self.current_index = 0
-
-        def check_sequence(event):
-            """Check if the entered key sequence matches the Konami code.
-
-            Args:
-                event (keyboard.KeyboardEvent): The keyboard event representing the pressed key.
-            """
-            if self.focus_get() is None:  # Check if application is not in focus
-                return
-
-            print(event.name)
-            if event.name == expected_sequence[self.current_index].lower():
-                self.current_index += 1
-                if self.current_index == len(expected_sequence):
-                    print("Konami code entered!")
-                    self.current_index = 0
-                    self.callback()  # Call the callback function in Application
-                    keyboard.unhook_all()
-            else:
-                self.current_index = 0
 
         self.configure(bg="")
 
@@ -72,7 +48,6 @@ class HomePage(tk.Frame):
             self, text=predator_text, style="Pred.TLabel", justify="center")
         self.predLabel.pack(padx=10, pady=(0, 10), fill="both")
 
-        keyboard.on_press(check_sequence)
         self.update_labels()  # Update the labels with the latest data
 
     def update_labels(self):
