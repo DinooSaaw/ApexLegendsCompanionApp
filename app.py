@@ -1,7 +1,12 @@
+import contextlib
 import tkinter as tk
+from tkinter import messagebox
+import json
 from pages.stats_page import StatsPage
 from pages.leaderboard_page import LeaderboardPage
 from pages.home_page import HomePage
+from pages.login_page import LoginPage
+from config import Config
 
 
 class GameApp(tk.Tk):
@@ -11,62 +16,51 @@ class GameApp(tk.Tk):
         """Initialize the GameApp class."""
         super().__init__()
 
-        self.title("ALC")
-        self.geometry("600x400")
-        icon_path = "./assests/icon.ico"
-        self.iconbitmap(icon_path)
+        self.title(Config.WINDOW_TITLE)
+        self.geometry(Config.WINDOW_SIZE)
+        self.iconbitmap(Config.ICON_PATH)
         self.setup_ui()
 
         # Set up variables
         self.current_page = None
-        self.is_konami_code_active = False
-        self.is_logged_in = False
-        self.access_level = 0
         self.username = ""
 
         # Create page containers
-        self.stats_page = StatsPage(self, self.login_callback, self.username)
+        self.stats_page = StatsPage(self)
         self.leaderboard_page = LeaderboardPage(self)
-        self.home_page = HomePage(self, self.konami_code_callback)
+        self.home_page = HomePage(self)
+        self.login_page = LoginPage(self, self.login)
 
-        self.open_home_page()
+        self.load_data()  # Load user data from file
+
+        self.open_login_page()
 
     def setup_ui(self):
         """Set up the user interface."""
         # Create a frame for buttons
         button_frame = tk.Frame(self)
-        button_frame.pack(pady=10)
+        button_frame.pack(side=tk.TOP, pady=10)
 
         # Create buttons and place them in the frame
         self.stats_button = tk.Button(
             button_frame, text="Stats", command=self.open_stats_page)
-        self.stats_button.grid(row=0, column=0, padx=10)
+        self.stats_button.pack(side=tk.LEFT, padx=10)
 
         self.leaderboard_button = tk.Button(
             button_frame, text="Leaderboard", command=self.open_leaderboard_page)
-        self.leaderboard_button.grid(row=0, column=1, padx=10)
+        self.leaderboard_button.pack(side=tk.LEFT, padx=10)
 
         self.home_button = tk.Button(
             button_frame, text="Home", command=self.open_home_page)
-        self.home_button.grid(row=0, column=2, padx=10)
+        self.home_button.pack(side=tk.LEFT, padx=10)
 
         # Create a label to display the username
         self.username_label = tk.Label(
             self, text="Not Logged In", font=("Arial", 10))
         self.username_label.pack(side=tk.BOTTOM, anchor=tk.W, padx=10, pady=10)
 
-        # Create the login button
-        self.login_button = tk.Button(
-            self, text="Login", command=self.open_login_page)
-
-        # Create the settings button
-        self.settings_button = tk.Button(
-            self, text="⚙️", command=self.open_settings_page)
-        self.settings_button.place(x=self.winfo_width() - 60, y=0)
-
     def open_stats_page(self):
         """Switch to the Stats page."""
-        self.stats_page = StatsPage(self, self.login_callback, self.username)
         self.switch_page(self.stats_page, "Stats")
 
     def open_leaderboard_page(self):
@@ -75,19 +69,6 @@ class GameApp(tk.Tk):
 
     def open_home_page(self):
         """Switch to the Home page."""
-        if self.is_logged_in:
-            self.username_label.pack(
-                side=tk.BOTTOM, anchor=tk.W, padx=10, pady=10)
-            if self.access_level >= 3:
-                self.settings_button.place(x=self.winfo_width() - 60, y=0)
-            else:
-                self.settings_button.place_forget()
-        else:
-            self.username_label.pack_forget()
-            self.settings_button.place_forget()
-
-        self.login_button.pack_forget()
-
         self.switch_page(self.home_page, "Home")
 
     def open_login_page(self):
@@ -118,30 +99,39 @@ class GameApp(tk.Tk):
         """
         self.title(f"ALC ~ {page_title}")
 
-    def konami_code_callback(self):
-        """Callback function for Konami code activation."""
-        self.is_konami_code_active = True
-        self.login_button.pack(side=tk.TOP, anchor=tk.E, padx=10, pady=10)
-
-    def login_callback(self, username, access_level):
-        """Callback function for successful login.
-
-        Args:
-            username: The logged-in user's username.
-            access_level: The access level of the user.
-
-        """
-        self.is_logged_in = True
-        self.access_level = access_level
+    def login(self, username):
+        """Perform the login operation."""
         self.username = username
         self.username_label.config(text=f"Logged In as {username}")
         self.open_home_page()
-        self.username_label.pack(side=tk.BOTTOM, anchor=tk.W, padx=10, pady=10)
-        self.login_button.pack_forget()
+        self.save_data()  # Save user data to file
 
-    def open_settings_page(self):
-        """Switch to the Settings page."""
-        self.switch_page(self.settings_page, "Settings")
+    def save_data(self):
+        """Save user data to a file."""
+        data = {"username": self.username}
+        with open("user_data.json", "w") as file:
+            json.dump(data, file)
+
+    def load_data(self):
+        """Load user data from a file."""
+        with contextlib.suppress(FileNotFoundError):
+            with open("user_data.json", "r") as file:
+                data = json.load(file)
+                self.username = data.get("username", "")
+
+
+def check_stored_credentials(self, username):
+    """Check if stored credentials for the given username are valid."""
+    try:
+        with open("accounts.json", "r") as file:
+            accounts = json.load(file)
+            if username in accounts:
+                return True
+    except FileNotFoundError:
+        pass  # Ignore if the file doesn't exist or hasn't been created yet
+    except json.JSONDecodeError:
+        pass  # Ignore if there's an issue decoding the JSON data
+    return False
 
 
 # Run the application

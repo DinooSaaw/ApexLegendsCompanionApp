@@ -6,25 +6,19 @@ from function import Request
 class StatsPage(tk.Frame):
     """Page that displays statistics."""
 
-    def __init__(self, parent, login_callback, username):
+    def __init__(self, parent):
         """Initialize the StatsPage class.
 
         Args:
             parent: The parent widget.
-            login_callback: The callback function for login.
-            username: The username of the logged-in user.
-
         """
         super().__init__(parent)
-        self.login_callback = login_callback
-        self.username = username
 
         # Player Name Entry
         player_name_label = tk.Label(self, text="Player Name:")
         player_name_label.grid(row=1, column=0)
         self.player_name_entry = tk.Entry(self)
         self.player_name_entry.grid(row=1, column=1)
-        self.player_name_entry.insert( 0, username)
 
         # Platform Dropdown
         platform_label = tk.Label(self, text="Platform:")
@@ -34,7 +28,7 @@ class StatsPage(tk.Frame):
         self.platform_dropdown = ttk.Combobox(
             self, textvariable=self.platform_var)
         self.platform_dropdown["values"] = (
-            "XBOX", "PS", "PC")  # Add your platform options here
+            "X1", "PS4", "PC", "SWITCH")  # Add your platform options here
         self.platform_dropdown.grid(row=2, column=1)
 
         # Search Button
@@ -45,108 +39,95 @@ class StatsPage(tk.Frame):
         self.level_label = tk.Label(self, text="")
         self.level_label.grid(row=4, column=0, sticky='w')
 
-        # Create labels for displaying data
-        self.labels = []
-
-    def get_player_name(self):
-        """Get the value entered in the player name entry field."""
-        return self.player_name_entry.get()
-
-    def get_selected_platform(self):
-        """Get the selected value from the platform dropdown."""
-        platform = self.platform_var.get()
-        if platform == "XBOX":
-            return "X1"
-        elif platform == "PC":
-            return "PC"
-        elif platform == "PS":
-            return "PS4"
+        # Create a frame for data labels
+        self.data_frame = ttk.Frame(self)
+        self.data_frame.grid(row=5, column=0, columnspan=2, sticky="w")
 
     def search(self):
         """Search button callback function."""
-        player_name = self.get_player_name()
-        platform = self.get_selected_platform()
+        player_name = self.player_name_entry.get().strip()
+        platform = self.platform_var.get()
+
+        if not player_name:
+            self.display_error_message("Please enter a player name.")
+            return
+
+        if not platform:
+            self.display_error_message("Please select a platform.")
+            return
+
         # Perform search operation with player_name and platform values
         data = Request(
             f"https://api.mozambiquehe.re/bridge?&player={player_name}&platform={platform}", "").json()
 
         if 'Error' in data:
-            return self.display_error_message(data)
+            return self.display_error_message(data['Error'])
 
-        # Clear previous data labels if any
-        self.clear_labels()
+        self.display_data_labels(data)
 
-        self.update_data_labels(data)
-
-    def display_error_message(self, data):
+    def display_error_message(self, error_message):
         """Display error message label."""
-        error_message = data['Error']
-        if hasattr(self, 'error_label'):
-            self.error_label.destroy()
-        # Display error message or handle it as desired
-        self.error_label = tk.Label(
-            self, text=f"Error: {error_message}", fg="red")
-        self.error_label.grid(row=5, column=0, columnspan=2)
+        self.clear_data_labels()
 
-        # Clear previous data labels if any
-        self.clear_labels()
+        error_label = tk.Label(
+            self.data_frame, text=f"Error: {error_message}", fg="red")
+        error_label.grid(row=0, column=0, sticky='w')
+        self.data_frame.grid_columnconfigure(0, weight=1)
 
-    def clear_labels(self):
+    def clear_data_labels(self):
         """Clear previous data labels if any."""
-        for label in self.labels:
-            label.destroy()
-        self.labels = []
+        for widget in self.data_frame.winfo_children():
+            widget.destroy()
 
-    def update_data_labels(self, data):
-        """Update the data labels with the retrieved data."""
+    def display_data_labels(self, data):
+        """Display the data labels with the retrieved data."""
+        self.clear_data_labels()
+
         name = data["global"]["name"]
         platform = data["global"]["platform"]
         level = data["global"]["level"]
-        rankScore = data["global"]["rank"]["rankScore"]
-        rankName = data["global"]["rank"]["rankName"]
-        LegendName = data["legends"]["selected"]["LegendName"]
-        LegendData = data["legends"]["selected"]["data"]
+        rank_score = data["global"]["rank"]["rankScore"]
+        rank_name = data["global"]["rank"]["rankName"]
+        legend_name = data["legends"]["selected"]["LegendName"]
+        legend_data = data["legends"]["selected"]["data"]
 
-        # Add labels for the data
-        self.labels.append(self.create_label(f"Name: {name}", 6, 0))
-        self.labels.append(self.create_label(f"Platform: {platform}", 7, 0))
-
-        # Update level label
         self.level_label.config(text=f"Level: {level}")
 
-        # Create a label with different color based on rankName
-        rank_name_label = self.create_label(f"Rank Name: {rankName}", 8, 0)
-        rank_LP_label = self.create_label(f"LP: {formatNumber(rankScore)}", 9, 0)
-        if rankName == "Bronze":
-            rank_name_label.config(fg="brown")
-        elif rankName == "Silver":
-            rank_name_label.config(fg="gray")
-        elif rankName == "Gold":
-            rank_name_label.config(fg="gold")
-        elif rankName == "Platinum":
-            rank_name_label.config(fg="light blue")
-        elif rankName == "Diamond":
-            rank_name_label.config(fg="blue")
-        elif rankName == "Master":
-            rank_name_label.config(fg="purple")
-        elif rankName == "Apex Predator":
-            rank_name_label.config(fg="red")
+        # Add labels for the data
+        self.create_data_label(f"Name: {name}", 0)
+        self.create_data_label(f"Platform: {platform}", 1)
+        self.create_data_label(
+            f"Rank Name: {rank_name}", 2, fg=self.get_rank_name_color(rank_name))
+        self.create_data_label(f"LP: {formatNumber(rank_score)}", 3)
+        self.create_data_label(f"Legend Name: {legend_name}", 4)
 
-        self.labels.append(rank_name_label)
-        self.labels.append(rank_LP_label)
-        self.labels.append(self.create_label(f"Legend Name: {LegendName}", 10, 0))
+        for i, tracker in enumerate(legend_data[:3]):
+            tracker_name = tracker["name"]
+            tracker_value = tracker["value"]
+            self.create_data_label(f"{tracker_name}: {tracker_value}", i + 5)
 
-        for i, tracker in enumerate(LegendData[:3]):
-            trackerName = tracker["name"]
-            trackerValue = tracker["value"]
-            self.labels.append(self.create_label(f"{trackerName}: {trackerValue}", 11 + i, 0))
-
-    def create_label(self, text, row, column):
-        """Create a label with the given text and grid position."""
-        label = tk.Label(self, text=text)
-        label.grid(row=row, column=column, sticky='w')
+    def create_data_label(self, text, row, fg="black"):
+        """Create a data label with the given text and grid position."""
+        label = tk.Label(self.data_frame, text=text, fg=fg)
+        label.grid(row=row, column=0, sticky='w')
+        self.data_frame.grid_columnconfigure(0, weight=1)
         return label
 
+    @staticmethod
+    def get_rank_name_color(rank_name):
+        """Get the color for the rank name label based on the rank name value."""
+        rank_name_colors = {
+            "Bronze": "brown",
+            "Silver": "gray",
+            "Gold": "gold",
+            "Platinum": "light blue",
+            "Diamond": "blue",
+            "Master": "purple",
+            "Apex Predator": "red"
+        }
+        return rank_name_colors.get(rank_name, "black")
 
-def formatNumber(NUMBER):
-    return "{:,.0f}".format(NUMBER)
+
+def formatNumber(number):
+    """Format the given number with comma as a thousands separator and no decimal places."""
+    return "{:,.0f}".format(number)

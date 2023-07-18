@@ -9,6 +9,7 @@ headersList = {
     "Authorization": api_key
 }
 
+
 def Request(url, payload):
     """Make a GET request to the specified URL with the given payload.
 
